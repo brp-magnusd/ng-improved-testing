@@ -5,6 +5,9 @@ describe('$q service', function() {
 
     beforeEach(module('ngImprovedTesting.$q'));
 
+    afterAll(function() {
+        ngImprovedTesting.config.$setQTickDefault(false)
+    });
 
     var $rootScope;
 
@@ -90,7 +93,10 @@ describe('$q service', function() {
     describe('when $q.tick() is not enabled', function() {
         var $q;
 
+        beforeAll(ngImprovedTesting.config.$setQTickDefault(true));
+
         beforeEach(inject(function(_$q_) {
+
             $q = _$q_;
         }));
 
@@ -111,6 +117,31 @@ describe('$q service', function() {
             it('should not have been added to the $q service', function () {
                 expect($q.tick).toBeUndefined();
             });
+        });
+    });
+
+    describe('when $q.tick() is enabled by default', function() {
+
+        beforeAll(ngImprovedTesting.config.$setQTickDefault(true));
+
+        describe('$q.tick method', function() {
+            it('should have been added to the $q service', inject(function($q) {
+                expect(angular.isFunction($q.tick)).toBe(true);
+            }));
+
+            it('should have been added to the $q service the second time', inject(function($q) {
+                expect(angular.isFunction($q.tick)).toBe(true);
+            }));
+        });
+
+        describe('$q.tick disabled', function() {
+            beforeEach(function () {
+                ngImprovedTesting.config.$qTickDisable();
+            });
+
+            it('should not have been added to the $q service', inject(function ($q) {
+                expect($q.tick).toBeUndefined();
+            }));
         });
     });
 });
